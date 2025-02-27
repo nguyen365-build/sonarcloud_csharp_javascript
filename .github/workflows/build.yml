@@ -33,7 +33,7 @@ jobs:
         run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
       - name: Run MSTests
-        run: dotnet test ./WebApplication.Tests.csproj --logger trx --results-directory TestResults
+        run: dotnet test WebApplication.Tests\WebApplication.Tests.csproj --logger trx --results-directory TestResults
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
