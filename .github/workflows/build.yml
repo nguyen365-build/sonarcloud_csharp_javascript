@@ -27,13 +27,13 @@ jobs:
           nuget-version: 'latest'
 
       - name: Restore NuGet packages
-        run: nuget restore WebAppSolution.sln
+        run: nuget restore SonarCloud.CSharp.JavaScript.sln
 
       - name: Build solution
-        run: msbuild WebAppSolution.sln /p:Configuration=Release
+        run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
       - name: Run MSTests
-        run: dotnet test WebApp.Tests/WebApp.Tests.csproj --logger trx --results-directory TestResults
+        run: dotnet test ./WebApplication.Tests.csproj --logger trx --results-directory TestResults
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -42,11 +42,11 @@ jobs:
 
       - name: Install JavaScript dependencies
         run: npm install
-        working-directory: WebApp/Scripts
+        working-directory: WebApplication/Scripts
 
       - name: Run Jest tests
         run: npm test
-        working-directory: WebApp/Scripts
+        working-directory: WebApplication/Scripts
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
