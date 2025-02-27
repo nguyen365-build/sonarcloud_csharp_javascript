@@ -128,3 +128,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+/.vs
+/packages/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1
+/WebApplication/.vs
+/WebApplication/bin
+/WebApplication/obj/Debug
+/WebApplication.Tests/bin/Debug/net481
+/WebApplication.Tests/obj
