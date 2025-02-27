@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '4.7.2'
+
+      - name: Restore NuGet packages
+        run: nuget restore WebAppSolution.sln
+
+      - name: Build solution
+        run: msbuild WebAppSolution.sln /p:Configuration=Release
+
+      - name: Run MSTests
+        run: dotnet test WebApp.Tests/WebApp.Tests.csproj --logger trx --results-directory TestResults
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install JavaScript dependencies
+        run: npm install
+        working-directory: WebApp/Scripts
+
+      - name: Run Jest tests
+        run: npm test
+        working-directory: WebApp/Scripts
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: TestResults
+          path: TestResults
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
