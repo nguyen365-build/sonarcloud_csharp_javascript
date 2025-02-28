@@ -44,7 +44,6 @@ jobs:
       # Move Coverage Report to Correct Path for SonarCloud
       - name: Move Coverage Report
         run: |
-          mkdir -p TestResults
           mv TestResults/*/coverage.cobertura.xml TestResults/coverage.opencover.xml
 
       - name: Setup Node.js
