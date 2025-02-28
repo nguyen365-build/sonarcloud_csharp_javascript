@@ -32,13 +32,16 @@ jobs:
       - name: Build solution
         run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
-
-      - name: Run MSTests
+      # Run MSTests with Code Coverage Enabled
+      - name: Run MSTests & Generate Coverage
         run: |
-          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /logger:trx /ResultsDirectory:TestResults
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /EnableCodeCoverage /logger:trx /ResultsDirectory:TestResults
 
-      # - name: Run MSTests
-      #   run: dotnet test WebApplication.Tests\WebApplication.Tests.csproj --logger trx --results-directory TestResults
+      # Convert MSTest Coverage to OpenCover Format (SonarCloud Compatible)
+      - name: Convert MSTest Coverage to OpenCover
+        run: |
+          $coverageTool = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\CodeCoverage.exe"
+          & $coverageTool analyze /output:TestResults/coverage.opencover.xml TestResults/*.coverage
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -49,8 +52,9 @@ jobs:
         run: npm install
         working-directory: WebApplication/Scripts
 
+      # Run Jest Tests & Generate Coverage Report
       - name: Run Jest tests
-        run: npm test
+        run: npm test -- --coverage
         working-directory: WebApplication/Scripts
 
       - name: Upload Test Results
@@ -59,15 +63,17 @@ jobs:
           name: TestResults
           path: TestResults
 
-      # SonarQube scan
+      # Run SonarCloud Scan with Both C# and JavaScript Coverage
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      # Upload coverage report to SonarCloud
+      # Upload Both C# & JavaScript Coverage Reports to SonarCloud
       - name: Upload Coverage Report to SonarCloud
         run: |
-          sonar-scanner
+          sonar-scanner \
+            -Dsonar.cs.opencover.reportsPaths=TestResults/coverage.opencover.xml \
+            -Dsonar.javascript.lcov.reportPaths=WebApplication/Scripts/coverage/lcov.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
