@@ -30,7 +30,7 @@ jobs:
         run: nuget restore SonarCloud.CSharp.JavaScript.sln
 
       - name: Build solution
-        run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release /p:OutputPath="WebApplication.Tests\bin\Release"
+        run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
 
       - name: Run MSTests
