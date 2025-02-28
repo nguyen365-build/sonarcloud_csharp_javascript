@@ -39,12 +39,15 @@ jobs:
       # Run MSTests with Coverlet to Generate OpenCover Coverage
       - name: Run MSTests & Generate Coverage
         run: |
-          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /TestAdapterPath:. /logger:trx /ResultsDirectory:TestResults /Collect:"XPlat Code Coverage"
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /TestAdapterPath:. /logger:trx /ResultsDirectory:TestResults
 
       # Move Coverage Report to Correct Path for SonarCloud
       - name: Move Coverage Report
         run: |
           mv TestResults/*/coverage.cobertura.xml TestResults/coverage.opencover.xml
+      
+      - name: Debug Check Coverage Files
+        run: ls -R TestResults
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
