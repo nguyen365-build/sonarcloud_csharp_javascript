@@ -75,8 +75,6 @@ jobs:
       # Upload Both C# & JavaScript Coverage Reports to SonarCloud
       - name: Upload Coverage Report to SonarCloud
         run: |
-          sonar-scanner \
-            -Dsonar.cs.opencover.reportsPaths=TestResults/coverage.opencover.xml \
-            -Dsonar.javascript.lcov.reportPaths=WebApplication/Scripts/coverage/lcov.info
+          sonar-scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
