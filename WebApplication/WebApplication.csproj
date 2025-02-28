@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\operation.js" />
-    <Content Include="Scripts\tests\operation.test.js" />
+    <Content Include="Tests\operation.test.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

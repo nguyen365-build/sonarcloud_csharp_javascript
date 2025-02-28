@@ -1,4 +1,4 @@
-﻿const add = require('../operation');
+﻿const add = require('../Scripts/operation');
 
 test('adds 1 + 2 to equal 3', () => {
     expect(add(1, 2)).toBe(3);
