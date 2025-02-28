@@ -32,19 +32,35 @@ jobs:
       - name: Build solution
         run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
-      # Install Coverlet Collector for Code Coverage
-      #- name: Install Coverlet Collector
-      #  run: dotnet add WebApplication.Tests/WebApplication.Tests.csproj package coverlet.collector
-
-      # Run MSTests with Coverlet to Generate OpenCover Coverage
-      - name: Run MSTests & Generate Coverage
+      - name: Test, and Analyze Code with Coverage
+        shell: powershell
         run: |
-          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /TestAdapterPath:. /logger:trx /ResultsDirectory:TestResults
+        
+          $currentDirectory = Get-Location
+          Write-Host "Current Directory: $currentDirectory"
+        
+          Get-ChildItem -Path $currentDirectory -Filter OpenCover.Console.exe -Recurse
+          Get-ChildItem -Path $currentDirectory -Filter ReportGenerator.exe -Recurse
+             
+          # Define paths to OpenCover and ReportGenerator executables, # Replace {version} with the actual version number or use a script to dynamically find it
+          $openCoverPath = ".\packages\OpenCover.4.7.1221\tools\OpenCover.Console.exe"
+          $reportGeneratorPath = ".\packages\ReportGenerator.5.4.4\tools\net47\ReportGenerator.exe"
+        
+          # Run OpenCover
+          & $openCoverPath -target:"vstest.console.exe" -targetargs:"WebApplication.Tests\bin\Release\WebApplication.Tests.dll" -register:user -excludebyattribute:*.ExcludeFromCodeCoverage* -output:coverage.opencover.xml
+        
+          # Convert coverage report with ReportGenerator
+          & $reportGeneratorPath "-reports:coverage.opencover.xml" "-targetdir:TestResults" -reporttypes:Cobertura
+        
+      # Run MSTests with Coverlet to Generate OpenCover Coverage
+      # - name: Run MSTests & Generate Coverage
+      #   run: |
+      #     & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /TestAdapterPath:. /logger:trx /ResultsDirectory:TestResults  -register:user -excludebyattribute:*.ExcludeFromCodeCoverage* -output:coverage.xml
 
       # Move Coverage Report to Correct Path for SonarCloud
-      - name: Move Coverage Report
-        run: |
-          mv TestResults/*/coverage.cobertura.xml TestResults/coverage.opencover.xml
+      # - name: Move Coverage Report
+      #   run: |
+      #     mv TestResults/*/coverage.cobertura.xml TestResults/coverage.opencover.xml
       
       - name: Debug Check Coverage Files
         run: ls -R TestResults
