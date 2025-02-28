@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows10pro
 
     steps:
       - name: Checkout repository
@@ -47,10 +47,10 @@ jobs:
           $reportGeneratorPath = ".\packages\ReportGenerator.5.4.4\tools\net47\ReportGenerator.exe"
         
           # Run OpenCover
-          & $openCoverPath -target:"vstest.console.exe" -targetargs:"WebApplication.Tests\bin\Release\WebApplication.Tests.dll" -register:user -excludebyattribute:*.ExcludeFromCodeCoverage* -output:coverage.opencover.xml
+          $openCoverPath -target:"vstest.console.exe" -targetargs:"WebApplication.Tests\bin\Release\WebApplication.Tests.dll" -register:user -excludebyattribute:*.ExcludeFromCodeCoverage* -output:coverage.opencover.xml
         
           # Convert coverage report with ReportGenerator
-          & $reportGeneratorPath "-reports:coverage.opencover.xml" "-targetdir:TestResults" -reporttypes:Cobertura
+          $reportGeneratorPath "-reports:coverage.opencover.xml" "-targetdir:TestResults" -reporttypes:Cobertura
         
       # Run MSTests with Coverlet to Generate OpenCover Coverage
       # - name: Run MSTests & Generate Coverage
