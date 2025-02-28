@@ -32,16 +32,20 @@ jobs:
       - name: Build solution
         run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
-      # Run MSTests with Code Coverage Enabled
+      # Install Coverlet Collector for Code Coverage
+      - name: Install Coverlet Collector
+        run: dotnet add WebApplication.Tests/WebApplication.Tests.csproj package coverlet.collector
+
+      # Run MSTests with Coverlet to Generate OpenCover Coverage
       - name: Run MSTests & Generate Coverage
         run: |
-          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /EnableCodeCoverage /logger:trx /ResultsDirectory:TestResults
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /TestAdapterPath:. /logger:trx /ResultsDirectory:TestResults /Collect:"XPlat Code Coverage"
 
-      # Convert MSTest Coverage to OpenCover Format (SonarCloud Compatible)
-      - name: Convert MSTest Coverage to OpenCover
+      # Move Coverage Report to Correct Path for SonarCloud
+      - name: Move Coverage Report
         run: |
-          $coverageTool = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\CodeCoverage.exe"
-          & $coverageTool analyze /output:TestResults/coverage.opencover.xml TestResults/*.coverage
+          mkdir -p TestResults
+          mv TestResults/*/coverage.cobertura.xml TestResults/coverage.opencover.xml
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
