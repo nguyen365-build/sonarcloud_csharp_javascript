@@ -32,13 +32,13 @@ jobs:
       - name: Build solution
         run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
-      - name: Install Web Development Build Tools
-        run: |
-          choco install visualstudio2022buildtools --params "--add Microsoft.VisualStudio.Component.WebBuildTools --quiet --norestart" -y
-        shell: powershell
 
       - name: Run MSTests
-        run: dotnet test WebApplication.Tests\WebApplication.Tests.csproj --logger trx --results-directory TestResults
+        run: |
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" WebApplication.Tests\bin\Release\WebApplication.Tests.dll /logger:trx /ResultsDirectory:TestResults
+
+      # - name: Run MSTests
+      #   run: dotnet test WebApplication.Tests\WebApplication.Tests.csproj --logger trx --results-directory TestResults
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
