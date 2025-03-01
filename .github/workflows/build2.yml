@@ -41,7 +41,7 @@ jobs:
 
       # Run Jest Tests & Generate Coverage Report (Outputs: ./coverage/lcov.info)
       - name: Run Jest tests
-        run: npm test -- --coverage
+        run: npm test
         working-directory: WebApplication/Scripts
 
       - name: Start SonarCloud Analysis
