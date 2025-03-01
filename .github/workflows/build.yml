@@ -92,6 +92,7 @@ jobs:
       - name: Standard Run SonarCloud Analysis
         run: |
           $sonarScannerPath = Get-ChildItem -Path C:\sonar -Recurse -Filter "sonar-scanner.bat" -File | Select-Object -ExpandProperty FullName
+          Write-Host "$sonarScannerPath found at: $sonarScannerPath"
 
           & $sonarScannerPath `
               -D"sonar.projectKey=nguyen365-build_sonarcloud_csharp_javascript" `
