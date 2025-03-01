@@ -91,12 +91,15 @@ jobs:
       - name: Run SonarCloud Analysis
         run: |
           $sonarScannerPath = Get-ChildItem -Path C:\sonar -Recurse -Filter "sonar-scanner.bat" -File | Select-Object -ExpandProperty FullName
-          & $sonarScannerPath -Dsonar.projectKey=nguyen365-build_sonarcloud_csharp_javascript `
-                            -Dsonar.organization=365nguyen `
-                            -Dsonar.host.url=https://sonarcloud.io `
-                            -Dsonar.token=${{ secrets.SONAR_TOKEN }} `
-                            -Dsonar.cs.opencover.reportsPaths=coverage.opencover.xml `
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+          & $sonarScannerPath `
+              -D"sonar.projectKey=nguyen365-build_sonarcloud_csharp_javascript" `
+              -D"sonar.organization=365nguyen" `
+              -D"sonar.host.url=https://sonarcloud.io" `
+              -D"sonar.token=***" `
+              -D"sonar.cs.opencover.reportsPaths=coverage.opencover.xml" `
+              -D"sonar.javascript.lcov.reportPaths=coverage/lcov.info"
+          
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
