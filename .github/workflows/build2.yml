@@ -44,6 +44,16 @@ jobs:
         run: npm test
         working-directory: WebApplication/Scripts
 
+      - name: Verify Jest Coverage Report
+        shell: pwsh
+        run: |
+          if (!(Test-Path "coverage\lcov.info")) {
+              Write-Host "JavaScript coverage file NOT found!"
+              exit 1
+          } else {
+              Write-Host "JavaScript coverage file found at: coverage\lcov.info"
+          }
+
       - name: Start SonarCloud Analysis
         run: |
           $sonarScannerPath = (Get-ChildItem -Path C:\ -Recurse -Filter "dotnet-sonarscanner.exe" -ErrorAction SilentlyContinue -File | Select-Object -First 1).FullName
