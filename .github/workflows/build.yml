@@ -39,8 +39,8 @@ jobs:
           Write-Host "Current Directory: $currentDirectory"
 
           # Search for OpenCover and ReportGenerator executables
-          $openCoverPath = (Get-ChildItem -Path $currentDirectory -Filter OpenCover.Console.exe -Recurse | Select-Object -First 1).FullName
-          $reportGeneratorPath = (Get-ChildItem -Path $currentDirectory -Filter ReportGenerator.exe -Recurse | Select-Object -First 1).FullName
+          $openCoverPath = Get-ChildItem -Path . -Recurse -Filter "OpenCover.Console.exe" -File | Select-Object -ExpandProperty FullName
+          $reportGeneratorPath = Get-ChildItem -Path . -Recurse -Filter "ReportGenerator.exe" -File | Where-Object { $_.FullName -match '\\net47\\' } | Select-Object -ExpandProperty FullName
 
           if (-not $openCoverPath) { Write-Host "OpenCover not found!"; exit 1 }
           if (-not $reportGeneratorPath) { Write-Host "ReportGenerator not found!"; exit 1 }
@@ -49,7 +49,7 @@ jobs:
           Write-Host "ReportGenerator found at: $reportGeneratorPath"
 
           # Run OpenCover
-          & $openCoverPath -target:"vstest.console.exe" -targetargs:"WebApplication.Tests\bin\Release\WebApplication.Tests.dll" -register:user -excludebyattribute:*.ExcludeFromCodeCoverage* -output:coverage.opencover.xml
+          & $openCoverPath -target:"vstest.console.exe" -targetargs:"WebApplication.Test\bin\Release\WebApplication.Test.dll" -register:user -excludebyattribute:*.ExcludeFromCodeCoverage* -output:coverage.opencover.xml
 
           # Convert coverage report with ReportGenerator
           & $reportGeneratorPath "-reports:coverage.opencover.xml" "-targetdir:TestResults" -reporttypes:Cobertura
@@ -97,9 +97,9 @@ jobs:
         working-directory: WebApplication/Scripts
 
       # Run Jest Tests & Generate Coverage Report
-      # - name: Run Jest tests
-      #   run: npm test -- --coverage
-      #   working-directory: WebApplication/Scripts
+      - name: Run Jest tests
+        run: npm test -- --coverage
+        working-directory: WebApplication/Scripts
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4

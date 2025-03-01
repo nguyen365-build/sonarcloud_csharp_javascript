@@ -136,3 +136,9 @@ dist
 /WebApplication.Tests/bin/Debug/net481
 /WebApplication.Tests/obj
 /WebApplication.Tests/bin/Release
+/packages
+/WebApplication.Test/bin/Debug
+/WebApplication.Test/obj/Debug
+/WebApplication/obj/Release
+/WebApplication.Test/bin/Release
+/WebApplication.Test/obj/Release
