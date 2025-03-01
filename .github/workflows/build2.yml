@@ -50,7 +50,7 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
           $sonarScannerPath = (Get-ChildItem -Path . -Recurse -Filter "dotnet-sonarscanner.exe" -File | Select-Object -First 1).FullName
           Write-Host "$sonarScannerPath found at: $sonarScannerPath"
-          & $sonarScannerPath begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info /p:sonar.verbose=true
+          & $sonarScannerPath begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info
 
       - name: Build Solution
         run: dotnet build SonarCloud.CSharp.JavaScript.sln --configuration Release
