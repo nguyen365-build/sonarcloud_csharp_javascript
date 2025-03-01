@@ -1,4 +1,4 @@
-name: Build2
+name: Build Pipeline
 
 on:
   workflow_dispatch:
@@ -71,7 +71,8 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" `
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
           -d:sonar.exclusions="node_modules/**, **/*.config.js" `
-          -d:sonar.sources="." `
+          -d:sonar.sources="WebApplication\Scripts" `
+          -d:sonar.tests="WebApplication\Tests" `
           /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" `
           /d:sonar.javascript.lcov.reportPaths="$lcovInfoPath" `
           /d:sonar.scanner.scanAll=true `
