@@ -111,6 +111,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
+          # SONAR BEGIN
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info
+          
           msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
           $currentDirectory = Get-Location
@@ -119,9 +122,7 @@ jobs:
           Get-ChildItem -Path $currentDirectory -Filter OpenCover.Console.exe -Recurse
           Get-ChildItem -Path $currentDirectory -Filter ReportGenerator.exe -Recurse
               
-          # SONAR BEGIN
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info
-      
+
           $currentDirectory = Get-Location
           Write-Host "Current Directory: $currentDirectory"
 
