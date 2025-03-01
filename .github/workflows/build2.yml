@@ -64,7 +64,7 @@ jobs:
           # Find OpenCover and ReportGenerator
           $openCoverPath = (Get-ChildItem -Path . -Recurse -Filter "OpenCover.Console.exe" -File | Select-Object -First 1).FullName
           $reportGeneratorPath = (Get-ChildItem -Path . -Recurse -Filter "ReportGenerator.exe" -File | Where-Object { $_.FullName -match '\\net47\\' } | Select-Object -First 1).FullName
-          $vstestPath = Get-Command vstest.console.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+          $vstestPath = (Get-ChildItem -Path C:\ -Recurse -Filter "vstest.console.exe" -ErrorAction SilentlyContinue -File | Select-Object -First 1).FullName
 
           if (-not $openCoverPath) { Write-Host "OpenCover not found!"; exit 1 }
           if (-not $reportGeneratorPath) { Write-Host "ReportGenerator not found!"; exit 1 }
