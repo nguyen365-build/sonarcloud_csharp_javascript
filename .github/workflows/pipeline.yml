@@ -71,7 +71,7 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" `
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
           -d:sonar.exclusions="node_modules/**, **/*.config.js" `
-          -d:sonar.sources="WebApplication\Scripts" `
+          -d:sonar.sources="." `
           /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" `
           /d:sonar.javascript.lcov.reportPaths="$lcovInfoPath" `
           /d:sonar.scanner.scanAll=true `
