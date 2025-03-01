@@ -89,7 +89,7 @@ jobs:
           path: TestResults
 
       # Run SonarCloud Analysis with Both C# and JavaScript Coverage
-      - name: Run SonarCloud Analysis
+      - name: Standard Run SonarCloud Analysis
         run: |
           $sonarScannerPath = Get-ChildItem -Path C:\sonar -Recurse -Filter "sonar-scanner.bat" -File | Select-Object -ExpandProperty FullName
 
@@ -104,17 +104,42 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-     # # Run SonarCloud Scan with Both C# and JavaScript Coverage
-     # - name: SonarQube Scan
-     #   uses: SonarSource/sonarqube-scan-action@v4
-     #   env:
-     #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-     #
-      # Upload Both C# & JavaScript Coverage Reports to SonarCloud
+      - name: .Net Build, Test, and Analyze Code with Coverage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          $netSonarScannerPath = Get-ChildItem -Path C:\sonar -Recurse -Filter "SonarScanner.MSBuild.exe" -File | Select-Object -ExpandProperty FullName
 
+          & $netSonarScannerPath begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
 
-     # - name: Upload Coverage Report to SonarCloud
-     #   run: |
-     #     sonar-scanner
-     #   env:
-     #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          MSBuild.exe SonarCloud.CSharp.JavaScript.sln /t:Rebuild /p:Configuration=Release
+
+          $currentDirectory = Get-Location
+          Write-Host "Current Directory: $currentDirectory"
+      
+          Get-ChildItem -Path $currentDirectory -Filter OpenCover.Console.exe -Recurse
+          Get-ChildItem -Path $currentDirectory -Filter ReportGenerator.exe -Recurse
+              
+
+          $currentDirectory = Get-Location
+          Write-Host "Current Directory: $currentDirectory"
+
+          # Search for OpenCover and ReportGenerator executables
+          $openCoverPath = Get-ChildItem -Path . -Recurse -Filter "OpenCover.Console.exe" -File | Select-Object -ExpandProperty FullName
+          $reportGeneratorPath = Get-ChildItem -Path . -Recurse -Filter "ReportGenerator.exe" -File | Where-Object { $_.FullName -match '\\net47\\' } | Select-Object -ExpandProperty FullName
+
+          if (-not $openCoverPath) { Write-Host "OpenCover not found!"; exit 1 }
+          if (-not $reportGeneratorPath) { Write-Host "ReportGenerator not found!"; exit 1 }
+
+          Write-Host "OpenCover found at: $openCoverPath"
+          Write-Host "ReportGenerator found at: $reportGeneratorPath"
+
+          # Run OpenCover
+          & $openCoverPath -target:"vstest.console.exe" -targetargs:"WebApplication.Test\bin\Release\WebApplication.Test.dll" -register:user -excludebyattribute:*.ExcludeFromCodeCoverage* -output:coverage.opencover.xml
+
+          # Convert coverage report with ReportGenerator
+          & $reportGeneratorPath "-reports:coverage.opencover.xml" "-targetdir:TestResults" -reporttypes:Cobertura
+
+          & $netSonarScannerPath end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
