@@ -62,7 +62,11 @@ jobs:
           Write-Host "sonarScannerPath found at: $sonarScannerPath"
           Write-Host "lcovInfoPath found at: $lcovInfoPath"
 
-          & $sonarScannerPath begin `
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          
+          # & $sonarScannerPath begin `
+          .\.sonar\scanner\dotnet-sonarscanner begin `
           /k:"nguyen365-build_sonarcloud_csharp_javascript" `
           /o:"365nguyen" `
           /d:sonar.host.url="https://sonarcloud.io" `
@@ -103,4 +107,5 @@ jobs:
       - name: End SonarCloud Analysis
         run: |
             $sonarScannerPath = (Get-ChildItem -Path C:\ -Recurse -Filter "dotnet-sonarscanner.exe" -ErrorAction SilentlyContinue -File | Select-Object -First 1).FullName
-            & $sonarScannerPath end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+            .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+            # & $sonarScannerPath end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
