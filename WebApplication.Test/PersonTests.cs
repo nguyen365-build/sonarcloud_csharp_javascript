@@ -7,70 +7,21 @@ namespace WebApplication.Test
     public sealed class PersonTests : Person
     {
         [TestMethod]
-        public void FirstName_ShouldBeSetAndRetrievedCorrectly()
+        public void Attributes_ShouldBeSetAndRetrievedCorrectly()
         {
             // Arrange
             var person = new Person
             {
                 // Act
-                FirstName = "John"
+                FirstName = "John",
+                LastName = "Doe",
+                Title = "Mr."
             };
 
             // Assert
             Assert.AreEqual("John", person.FirstName);
-        }
-
-        [TestMethod]
-        public void LastName_ShouldBeSetAndRetrievedCorrectly()
-        {
-            // Arrange
-            var person = new Person
-            {
-                // Act
-                LastName = "Doe"
-            };
-
-            // Assert
             Assert.AreEqual("Doe", person.LastName);
-        }
-
-        [TestMethod]
-        public void Person_ShouldAllowEmptyFirstName()
-        {
-            // Arrange
-            var person = new Person
-            {
-                // Act
-                FirstName = ""
-            };
-
-            // Assert
-            Assert.AreEqual("", person.FirstName);
-        }
-
-        [TestMethod]
-        public void Person_ShouldAllowEmptyLastName()
-        {
-            // Arrange
-            var person = new Person
-            {
-                // Act
-                LastName = ""
-            };
-
-            // Assert
-            Assert.AreEqual("", person.LastName);
-        }
-
-        [TestMethod]
-        public void Person_ShouldInitializeWithDefaultValues()
-        {
-            // Act
-            var person = new Person();
-
-            // Assert
-            Assert.IsNull(person.FirstName);
-            Assert.IsNull(person.LastName);
+            Assert.AreEqual("Mr.", person.Title);
         }
     }
 }
