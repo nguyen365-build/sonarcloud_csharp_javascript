@@ -117,13 +117,11 @@ jobs:
           Get-ChildItem -Path $currentDirectory -Filter ReportGenerator.exe -Recurse
               
           # SONAR BEGIN
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml
       
       
           # SONAR BEGIN
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
-
 
      # # Run SonarCloud Scan with Both C# and JavaScript Coverage
      # - name: SonarQube Scan
@@ -131,9 +129,10 @@ jobs:
      #   env:
      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
      #
-     # # Upload Both C# & JavaScript Coverage Reports to SonarCloud
-     # - name: Upload Coverage Report to SonarCloud
-     #   run: |
-     #     sonar-scanner
-     #   env:
-     #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # Upload Both C# & JavaScript Coverage Reports to SonarCloud
+
+      - name: Upload Coverage Report to SonarCloud
+        run: |
+          sonar-scanner
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
