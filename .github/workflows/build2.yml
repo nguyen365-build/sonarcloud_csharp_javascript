@@ -44,14 +44,10 @@ jobs:
         run: npm test -- --coverage
         working-directory: WebApplication/Scripts
 
-      - name: Install SonarScanner
-        run: dotnet tool install --global dotnet-sonarscanner
-
       - name: Start SonarCloud Analysis
         run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-          dotnet-sonarscanner begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info /p:sonar.verbose=true
+          $sonarScannerPath = (Get-Command dotnet-sonarscanner -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source)
+          & $sonarScannerPath begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info /p:sonar.verbose=true
 
       - name: Build Solution
         run: dotnet build SonarCloud.CSharp.JavaScript.sln --configuration Release
@@ -82,4 +78,6 @@ jobs:
           & $reportGeneratorPath "-reports:coverage.opencover.xml" "-targetdir:TestResults" -reporttypes:Cobertura
 
       - name: End SonarCloud Analysis
-        run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: |
+            $sonarScannerPath = (Get-Command dotnet-sonarscanner -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source)
+            & $sonarScannerPath end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
