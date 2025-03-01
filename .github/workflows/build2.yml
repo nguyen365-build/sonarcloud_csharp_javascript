@@ -52,7 +52,6 @@ jobs:
               exit 1
           } else {
               Write-Host "JavaScript coverage file found at: coverage\lcov.info"
-              Copy-Item -Path "coverage\lcov.info" -Destination "lcov.info" -Force
           }
 
       - name: Start SonarCloud Analysis
@@ -72,9 +71,11 @@ jobs:
           /d:sonar.host.url="https://sonarcloud.io" `
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
           -d:sonar.exclusions="node_modules/**, **/*.config.js" `
+          -d:sonar.sources="WebApplication\Scripts" `
           /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" `
           /d:sonar.javascript.lcov.reportPaths="$lcovInfoPath" `
-          /d:sonar.scanner.scanAll=true
+          /d:sonar.scanner.scanAll=true `
+          -d:sonar.verbose=true
 
       - name: Build Solution
         run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
