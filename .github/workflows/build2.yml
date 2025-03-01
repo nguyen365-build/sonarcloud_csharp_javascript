@@ -49,13 +49,15 @@ jobs:
           $sonarScannerPath = (Get-ChildItem -Path C:\ -Recurse -Filter "dotnet-sonarscanner.exe" -ErrorAction SilentlyContinue -File | Select-Object -First 1).FullName
           $lcovInfoPath = (Get-ChildItem -Path . -Recurse -Filter "lcov.info" -ErrorAction SilentlyContinue -File | Select-Object -First 1).FullName
           Write-Host "sonarScannerPath found at: $sonarScannerPath"
+          Write-Host "lcovInfoPath found at: $lcovInfoPath"
+
           & $sonarScannerPath begin `
           /k:"nguyen365-build_sonarcloud_csharp_javascript" `
           /o:"365nguyen" `
           /d:sonar.host.url="https://sonarcloud.io" `
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-          /d:sonar.cs.opencover.reportsPaths=coverage.opencover.xml `
-          /d:sonar.javascript.lcov.reportPaths=$lcovInfoPath `
+          /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml `
+          /d:sonar.javascript.lcov.reportPaths="coverage/lcov.info" `
           /d:sonar.scanner.scanAll=true
 
       - name: Build Solution
