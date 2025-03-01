@@ -142,3 +142,5 @@ dist
 /WebApplication/obj/Release
 /WebApplication.Test/bin/Release
 /WebApplication.Test/obj/Release
+/.sonar/scanner
+/.sonarqube
