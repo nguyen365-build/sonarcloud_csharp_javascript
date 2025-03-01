@@ -103,11 +103,7 @@ jobs:
           name: TestResults
           path: TestResults
 
-      - name: Upload Coverage Report to SonarCloud
-        run: |
-          sonar-scanner
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 
       - name: Build, Test, and Analyze Code with Coverage
         env:
@@ -157,3 +153,8 @@ jobs:
       # Upload Both C# & JavaScript Coverage Reports to SonarCloud
 
 
+     # - name: Upload Coverage Report to SonarCloud
+     #   run: |
+     #     sonar-scanner
+     #   env:
+     #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
