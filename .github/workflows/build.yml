@@ -96,7 +96,7 @@ jobs:
               -D"sonar.projectKey=nguyen365-build_sonarcloud_csharp_javascript" `
               -D"sonar.organization=365nguyen" `
               -D"sonar.host.url=https://sonarcloud.io" `
-              -D"sonar.token=***" `
+              -D"sonar.token=${{ secrets.SONAR_TOKEN }}" `
               -D"sonar.cs.opencover.reportsPaths=coverage.opencover.xml" `
               -D"sonar.javascript.lcov.reportPaths=coverage/lcov.info"
           
