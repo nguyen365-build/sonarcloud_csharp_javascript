@@ -56,6 +56,7 @@ jobs:
           /o:"365nguyen" `
           /d:sonar.host.url="https://sonarcloud.io" `
           /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+          -d:sonar.exclusions="node_modules/**, **/*.config.js" `
           /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" `
           /d:sonar.javascript.lcov.reportPaths="coverage/lcov.info" `
           /d:sonar.scanner.scanAll=true
@@ -91,4 +92,4 @@ jobs:
       - name: End SonarCloud Analysis
         run: |
             $sonarScannerPath = (Get-ChildItem -Path C:\ -Recurse -Filter "dotnet-sonarscanner.exe" -ErrorAction SilentlyContinue -File | Select-Object -First 1).FullName
-            & $sonarScannerPath end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+            & $sonarScannerPath end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
