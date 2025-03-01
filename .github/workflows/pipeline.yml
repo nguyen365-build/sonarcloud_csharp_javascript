@@ -110,4 +110,3 @@ jobs:
         run: |
             $sonarScannerPath = (Get-ChildItem -Path C:\ -Recurse -Filter "dotnet-sonarscanner.exe" -ErrorAction SilentlyContinue -File | Select-Object -First 1).FullName
             .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-            # & $sonarScannerPath end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
