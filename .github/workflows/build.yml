@@ -2,12 +2,6 @@ name: Build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
@@ -30,9 +24,6 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore SonarCloud.CSharp.JavaScript.sln
 
-      # - name: Build solution
-      #   run: msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
-        
       - name: Debug Check Coverage Files
         run: ls -R TestResults
 
@@ -53,27 +44,19 @@ jobs:
       - name: Build, Test, and Analyze Code with Coverage
         shell: powershell
         run: |
-          # dotnet tool install --global dotnet-sonarscanner
+          dotnet tool install --global dotnet-sonarscanner
 
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
           # SONAR BEGIN
 
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=coverage.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info /p:sonar.verbose=true
-          #dotnet sonarscanner begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.host.url="https://sonarcloud.io"  /d:sonar.login="${{ secrets.SONAR_TOKEN }}"  /d:sonar.cs.opencover.reportsPaths=coverage.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info /p:sonar.verbose=true
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"nguyen365-build_sonarcloud_csharp_javascript" /o:"365nguyen" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths=coverage.xml /d:sonar.javascript.lcov.reportPaths=coverage/lcov.info
 
           msbuild SonarCloud.CSharp.JavaScript.sln /p:Configuration=Release
 
           $currentDirectory = Get-Location
           Write-Host "Current Directory: $currentDirectory"
-      
-          # Get-ChildItem -Path $currentDirectory -Filter OpenCover.Console.exe -Recurse
-          # Get-ChildItem -Path $currentDirectory -Filter ReportGenerator.exe -Recurse
-              
-          # $currentDirectory = Get-Location
-          # Write-Host "Current Directory: $currentDirectory"
-          # Search for OpenCover and ReportGenerator executables
 
           $openCoverPath = Get-ChildItem -Path . -Recurse -Filter "OpenCover.Console.exe" -File | Select-Object -ExpandProperty FullName
           $reportGeneratorPath = Get-ChildItem -Path . -Recurse -Filter "ReportGenerator.exe" -File | Where-Object { $_.FullName -match '\\net47\\' } | Select-Object -ExpandProperty FullName
@@ -89,9 +72,8 @@ jobs:
           # Convert coverage report with ReportGenerator
           & $reportGeneratorPath "-reports:coverage.opencover.xml" "-targetdir:TestResults" -reporttypes:Cobertura
 
-          # SONAR BEGIN
+          # SONAR END
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-          # dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
 #      - name: Build, Test, and Analyze Code with Coverage
 #       shell: powershell
